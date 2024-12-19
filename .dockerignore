@@ -1,0 +1,8 @@
+app/**/node_modules
+app/frontend/build
+app/backend/dist
+
+misc/docker/volumes
+
+.pkg
+bin

@@ -1,0 +1,5 @@
+.pkg
+bin
+node_modules
+misc/docker/volumes
+.certs
