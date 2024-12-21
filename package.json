@@ -12,20 +12,15 @@
   "scripts": {
     "backend": "cd app/backend && yarn",
     "frontend": "cd app/frontend && yarn",
-    "start:backend:dev": "cd app/backend && yarn start:debug",
+    "start:backend:dev": "cd app/backend && yarn start:dev",
     "start:frontend:dev": "cd app/frontend && yarn dev",
     "start:all:dev": "concurrently \"yarn start:backend:dev\" \"yarn start:frontend:dev\"",
     "build:backend": "cd app/backend && yarn build",
     "build:frontend": "cd app/frontend && yarn build",
-    "build:all": "yarn build:frontend && rm -rf app/backend/public && cp -r app/frontend/build app/backend/public && yarn build:backend",
     "start:backend:prod": "cd app/backend && NODE_ENV=production yarn start:prod",
     "start:frontend:prod": "cd app/frontend && NODE_ENV=production yarn start",
     "start:all:prod": "concurrently \"yarn start:backend:prod\" \"yarn start:frontend:prod\"",
-    "start:prod": "yarn start:backend:prod",
-    "compile": "cross-env NODE_ENV=production PKG_CACHE_PATH=.pkg PKG_PLATFORM=${PKG_PLATFORM} ts-node misc/compiler/pkg.ts",
-    "bundle": "yarn build:all && yarn compile",
-    "docker-compose": "docker compose -f misc/docker/docker-compose.yml",
-    "docker-compose:prod": "yarn docker-compose -f misc/docker/docker-compose.yml -f misc/docker/docker-compose.production.yml"
+    "start:prod": "yarn start:backend:prod"
   },
   "repository": {
     "type": "git",

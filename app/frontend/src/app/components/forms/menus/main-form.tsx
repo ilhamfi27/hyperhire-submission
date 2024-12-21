@@ -1,5 +1,6 @@
 import { FC } from 'react';
 import { useMenuStore } from '@/store/reducers/menu';
+import toast from 'react-hot-toast';
 
 const MenusForm: FC = () => {
   const { createMenu, putMenu, detail, setDetail, deleteMenu } = useMenuStore();
@@ -14,11 +15,13 @@ const MenusForm: FC = () => {
           parentName: '',
           depth: 0,
         });
+        toast.success('Menu updated!');
       });
       return;
     }
     createMenu(detail).then(() => {
       setDetail({ id: '', name: '', parentId: null, parentName: '', depth: 0 });
+      toast.success('Menu created!');
     });
   };
   return (
@@ -87,15 +90,16 @@ const MenusForm: FC = () => {
           type="button"
           className="w-full py-3 bg-red-500 text-white rounded-lg hover:bg-red-600 disabled:opacity-50"
           onClick={() =>
-            deleteMenu(detail.id).then(() =>
+            deleteMenu(detail.id).then(() => {
               setDetail({
                 id: '',
                 name: '',
                 parentId: null,
                 parentName: '',
                 depth: 0,
-              }),
-            )
+              });
+              toast.success('Menu deleted!');
+            })
           }
           disabled={!detail.id}
         >

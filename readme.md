@@ -1,6 +1,6 @@
 # Hyperhire Submission
 
-This project using NestJS as backend side, and ReactJS as frontend side.
+This project using NestJS as backend side, and NextJS as frontend side.
 
 ## Requirement
 
@@ -24,13 +24,11 @@ yarn backend && yarn frontend
 ```
 cd app/backend && cp .env.example .env
 cd ../../
-cd app/frontend && cp .env.example .env
+cd app/frontend && cp .env.example .env.local
 cd ../../
 ```
 
 Once you have done all the points above, you can run the development server
-
-### Without Docker
 
 ```
 yarn start:all:dev
@@ -38,57 +36,11 @@ yarn start:all:dev
 
 Once all service running, you can open `http://localhost:3000` for frontend service, and `http://localhost:1321` for backend service
 
-### With Docker
+## Domain and Credentials
 
-When you want to run the project using docker, you will be doing some additional steps
+To acces this website, you can go to this [link](https://hyperhire-submission.vercel.app/).
 
-1. Execute this command to build the development docker image
+You will prompted to fill username and password. Below is the credentials to try this website:
 
-```
-yarn docker-compose build admin-portal
-```
-
-2. Run the services using this command below
-
-```
-yarn docker-compose up -d
-```
-
-For the development environment, 2 container should be running: `admin-portal`, `admin-portal-frontend`
-
-3. You can see the service logs using this command
-
-```
-yarn docker-compose logs -f
-```
-
-## Start Production Environment
-
-### With Docker
-
-We recommend use docker to run the production environment.
-
-1. Execute this command to build the production docker image
-
-```
-yarn docker-compose:prod build admin-portal
-```
-
-2. Run the services using this command below
-
-```
-yarn docker-compose:prod up -d adminportal
-```
-
-For the production environment, 1 container should be running: `admin-portal`
-
-3. You can see the service logs using this command
-
-```
-yarn docker-compose:prod logs -f
-```
-
-## Dependency Used
-
-1. [React Query](https://tanstack.com/query/v3/docs/framework/react/quick-start) for asynchronous state management
-2. [Zustand](https://zustand-demo.pmnd.rs) for state management
+username: admin
+password: password123!
