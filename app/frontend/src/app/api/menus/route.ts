@@ -13,7 +13,7 @@ export async function GET(request: NextRequest) {
     return apiErrorResponse(err);
   }
 
-  return NextResponse.json(res.data);
+  return NextResponse.json(res.data.length ? res.data : []);
 }
 
 export async function POST(request: NextRequest) {
