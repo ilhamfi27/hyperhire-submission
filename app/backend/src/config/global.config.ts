@@ -1,6 +1,8 @@
 import { API_PREFIX } from '../shared/constants/global.constants';
-
 import { Config } from './config.interface';
+import * as dotenv from 'dotenv';
+
+dotenv.config();
 
 export const GLOBAL_CONFIG: Config = {
   nest: {
