@@ -3,7 +3,6 @@ import { JwtService } from '@nestjs/jwt';
 import { UserService } from 'src/user/domains/user.service';
 import { AuthResponseDTO, LoginUserDTO } from '../application/dto/auth.dto';
 import { verify } from 'src/shared/utils/auth';
-import { GLOBAL_CONFIG } from 'src/config/global.config';
 import { JWT_SECRET } from 'src/shared/constants/global.constants';
 
 @Injectable()
@@ -34,9 +33,7 @@ export class AuthService {
       username: userData.username,
     };
 
-    const accessToken = this.jwtService.sign(payload, {
-      expiresIn: GLOBAL_CONFIG.security.expiresIn,
-    });
+    const accessToken = this.jwtService.sign(payload);
 
     return {
       user: payload,

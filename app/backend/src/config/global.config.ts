@@ -17,7 +17,7 @@ export const GLOBAL_CONFIG: Config = {
     path: API_PREFIX,
   },
   security: {
-    expiresIn: 3600 * 24, // 24h
+    expiresIn: 3600 * 24 * 7, // 7 days
     bcryptSaltOrRound: 10,
   },
 };

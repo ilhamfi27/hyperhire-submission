@@ -1,19 +1,25 @@
-import { type SidebarMenus } from '../../../../@types/menu';
+import { useMenuStore } from '@/store/reducers/menu';
+import { TreeViewData, type SidebarMenus } from '../../../../@types/menu';
+import { useEffect, useState } from 'react';
+import { buildTreeView } from '@/shared/utils/tree';
 
 const Sidebar = () => {
-  const menuItems: SidebarMenus[] = [
-    {
-      title: 'Systems',
-      children: [
-        { title: 'Menus', href: '#' },
-        { title: 'System Code', href: '#' },
-        { title: 'Properties', href: '#' },
-        { title: 'API List', href: '#' },
-      ],
-    },
-    { title: 'Users & Group', href: '#' },
-    { title: 'Competition', href: '#' },
-  ];
+  const { menus } = useMenuStore();
+  const [menuItems, setMenuItems] = useState<SidebarMenus[]>([]);
+
+  const generateSidebarMenus = (menus: TreeViewData[]): SidebarMenus[] => {
+    return menus.map((menu: TreeViewData) => {
+      return {
+        title: menu.name,
+        href: '#',
+        children: generateSidebarMenus(menu.children || []),
+      };
+    });
+  };
+
+  useEffect(() => {
+    setMenuItems(generateSidebarMenus(buildTreeView(menus)));
+  }, [menus]);
 
   const renderMenu = (items: SidebarMenus[], depth = 0) => {
     return (
@@ -42,7 +48,7 @@ const Sidebar = () => {
   };
 
   return (
-    <aside className="bg-gray-900 text-white w-64 p-6 rounded-lg shadow-lg relative top-4 left-4">
+    <aside className="bg-gray-900 text-white w-64 p-6 rounded-lg shadow-lg relative top-4 h-[97%] left-4 overflow-y-auto">
       <div className="text-2xl font-bold mb-8">CLOIT</div>
       <nav>{renderMenu(menuItems)}</nav>
     </aside>

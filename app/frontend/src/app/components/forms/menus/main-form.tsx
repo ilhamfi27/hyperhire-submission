@@ -1,48 +1,107 @@
-const MenusForm = () => {
+import { FC } from 'react';
+import { useMenuStore } from '@/store/reducers/menu';
+
+const MenusForm: FC = () => {
+  const { createMenu, putMenu, detail, setDetail, deleteMenu } = useMenuStore();
+  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (detail.id) {
+      putMenu(detail).then(() => {
+        setDetail({
+          id: '',
+          name: '',
+          parentId: null,
+          parentName: '',
+          depth: 0,
+        });
+      });
+      return;
+    }
+    createMenu(detail).then(() => {
+      setDetail({ id: '', name: '', parentId: null, parentName: '', depth: 0 });
+    });
+  };
   return (
-    <form className="bg-white rounded-lg shadow p-8 space-y-4 w-[48%]">
+    <form
+      className="bg-white rounded-lg shadow p-8 space-y-4 w-[48%]"
+      onSubmit={onSubmit}
+    >
       <div>
-        <label className="block text-gray-600 mb-1">Menu ID</label>
+        <label htmlFor="menu-id" className="block text-gray-600 mb-1">
+          Menu ID
+        </label>
         <input
+          id="menu-id"
           type="text"
-          className="w-full border rounded-lg p-2 text-gray-600 bg-gray-50"
-          value="56320ee9-6af6-11ed-a7ba-f220afe5e4a9"
+          className="w-full border rounded-lg p-2 text-gray-600"
+          value={detail.id}
           disabled
         />
       </div>
       <div>
-        <label className="block text-gray-600 mb-1">Depth</label>
+        <label htmlFor="menu-depth" className="block text-gray-600 mb-1">
+          Depth
+        </label>
         <input
+          id="menu-depth"
           type="number"
-          className="w-full border rounded-lg p-2 text-gray-600 bg-gray-50"
-          value="3"
+          className="w-full border rounded-lg p-2 text-gray-600"
+          value={detail.depth}
           disabled
         />
       </div>
       <div>
-        <label className="block text-gray-600 mb-1">Parent Data</label>
+        <label htmlFor="parent-data" className="block text-gray-600 mb-1">
+          Parent Data
+        </label>
         <input
+          id="parent-data"
           type="text"
-          className="w-full border rounded-lg p-2 text-gray-600 bg-gray-50"
-          value="Systems"
+          className="w-full border rounded-lg p-2 text-gray-600"
+          value={detail.parentName ?? ''}
           disabled
         />
       </div>
       <div>
-        <label className="block text-gray-600 mb-1">Name</label>
+        <label htmlFor="menu-name" className="block text-gray-600 mb-1">
+          Name
+        </label>
         <input
+          id="menu-name"
           type="text"
-          className="w-full border rounded-lg p-2 text-gray-600 bg-gray-50"
-          value="System Code"
-          disabled
+          className="w-full border rounded-lg p-2 text-gray-600"
+          value={detail.name}
+          onChange={(e) => {
+            setDetail({ ...detail, name: e.target.value });
+          }}
         />
       </div>
-      <button
-        type="submit"
-        className="w-full py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
-      >
-        Save
-      </button>
+      <div className="flex space-x-2">
+        <button
+          type="submit"
+          className="w-full py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+        >
+          {detail.id ? 'Save' : 'Create'}
+        </button>
+        <button
+          type="button"
+          className="w-full py-3 bg-red-500 text-white rounded-lg hover:bg-red-600 disabled:opacity-50"
+          onClick={() =>
+            deleteMenu(detail.id).then(() =>
+              setDetail({
+                id: '',
+                name: '',
+                parentId: null,
+                parentName: '',
+                depth: 0,
+              }),
+            )
+          }
+          disabled={!detail.id}
+        >
+          Delete
+        </button>
+      </div>
     </form>
   );
 };

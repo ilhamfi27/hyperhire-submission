@@ -1,70 +1,122 @@
-import React, { useState } from 'react';
-import { FaChevronDown, FaChevronRight } from 'react-icons/fa';
+import React, { FC, useEffect, useRef, useState } from 'react';
+import { NodeApi, NodeRendererProps, Tree, TreeApi } from 'react-arborist';
+import { TreeViewData } from '../../../../@types/menu';
+import clsx from 'clsx';
+import { MdArrowDropDown, MdArrowRight } from 'react-icons/md';
+import { FaPlusCircle } from 'react-icons/fa';
 
-export type TreeNode = {
-  id: string;
-  name: string;
-  children?: TreeNode[];
+type CustomNodeType = {
+  onBlueButtonClicked?: (data: TreeViewData) => void;
+  onNodeSelect?: (node: NodeApi<TreeViewData>) => void;
+};
+type TreeViewProps = {
+  data: TreeViewData[];
+  setTreeRef: (tree: TreeApi<TreeViewData>) => void;
+  onNodeSelect?: (node: NodeApi<TreeViewData>) => void;
+} & CustomNodeType;
+
+const FolderArrow = ({ node }: { node: NodeApi<TreeViewData> }) => {
+  return (
+    <span
+      className="w-5 flex text-2xl hover:cursor-pointer"
+      onClick={() => node.isInternal && node.toggle()}
+    >
+      {node.isInternal ? (
+        <>{node.isOpen ? <MdArrowDropDown /> : <MdArrowRight />}</>
+      ) : null}
+    </span>
+  );
 };
 
-export const TreeView: React.FC<{ data: TreeNode[] }> = ({ data }) => {
+const Node = ({ node, style, dragHandle }: NodeRendererProps<TreeViewData>) => {
   return (
-    <div className="flex flex-col">
-      {data.map((node) => (
-        <TreeNodeComponent key={node.id} node={node} />
-      ))}
+    <div
+      ref={dragHandle}
+      style={style}
+      className={clsx(
+        'relative rounded-lg flex items-center ml-5 h-full',
+        node.state,
+      )}
+    >
+      <FolderArrow node={node} />
+      <span className={'flex overflow-hidden text-ellipsis'}>
+        {node.data.name}
+      </span>
     </div>
   );
 };
 
-const TreeNodeComponent: React.FC<{ node: TreeNode }> = ({ node }) => {
-  const [isExpanded, setIsExpanded] = useState(false);
-  const hasChildren = node.children && node.children.length > 0;
-
-  const chevronStyle = 'w-4 h-4 text-gray-700';
-
+const NodeWrapper = ({
+  onBlueButtonClicked,
+  onNodeSelect,
+  ...nodeProps
+}: NodeRendererProps<TreeViewData> & CustomNodeType) => {
+  const nodeRef = useRef<HTMLDivElement | null>(null);
+  const [hover, setHover] = useState(false);
+  useEffect(() => {
+    if (nodeRef.current) {
+      nodeRef.current.addEventListener('mouseover', (e) => setHover(true));
+      nodeRef.current.addEventListener('mouseleave', (e) => setHover(false));
+    }
+  }, [nodeRef]);
   return (
-    <div className="relative">
-      <div
-        className="flex items-center gap-2 focus:outline-none hover:cursor-pointer"
-        onClick={() => setIsExpanded(!isExpanded)}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            setIsExpanded(!isExpanded);
-          }
-        }}
-        role="treeitem"
-        tabIndex={0}
-        aria-selected={isExpanded}
-        aria-expanded={isExpanded}
-      >
-        {hasChildren ? (
-          <button className="focus:outline-none">
-            {isExpanded ? (
-              <FaChevronDown className={chevronStyle} />
-            ) : (
-              <FaChevronRight className={chevronStyle} />
-            )}
-          </button>
-        ) : (
-          <div className="w-4" /> // Placeholder for alignment
-        )}
-        <div className="flex items-center">
-          <span className="ml-2 text-gray-700">{node.name}</span>
-        </div>
+    <div className="flex items-center" ref={nodeRef}>
+      <div onClick={() => onNodeSelect && onNodeSelect(nodeProps.node)}>
+        <Node {...nodeProps} />
       </div>
-
-      {/* Connecting lines */}
-      {hasChildren && <div className="absolute top-0 left-2 h-full" />}
-
-      {/* Children */}
-      {isExpanded && hasChildren && (
-        <div className="pl-2">
-          <TreeView data={node.children!} />
-        </div>
+      {hover && (
+        <FaPlusCircle
+          className={`fill-[#253BFF] ml-2 hover:cursor-pointer`}
+          onClick={() => {
+            // should add new node under this node
+            onBlueButtonClicked && onBlueButtonClicked(nodeProps.node.data);
+          }}
+        />
       )}
     </div>
   );
 };
 
-// Example Data
+const TreeView: FC<TreeViewProps> = ({
+  data,
+  setTreeRef,
+  onNodeSelect,
+  onBlueButtonClicked,
+}) => {
+  const noDataCondition = data.length === 0 || !data;
+  const [tree, setTree] = useState<TreeApi<TreeViewData> | null | undefined>(
+    null,
+  );
+
+  useEffect(() => {
+    setTreeRef && setTreeRef(tree as TreeApi<TreeViewData>);
+  }, [tree]);
+
+  if (noDataCondition) {
+    return (
+      <div className="flex flex-col items-center justify-center w-full h-full">
+        <span className="text-2xl text-gray-400">No data available</span>
+      </div>
+    );
+  }
+
+  return (
+    <Tree<TreeViewData>
+      data={data}
+      ref={(t) => setTree(t)}
+      disableDrag
+      disableDrop
+      disableEdit
+    >
+      {(nodeProps: any) => (
+        <NodeWrapper
+          {...nodeProps}
+          onBlueButtonClicked={onBlueButtonClicked}
+          onNodeSelect={onNodeSelect}
+        />
+      )}
+    </Tree>
+  );
+};
+
+export default TreeView;

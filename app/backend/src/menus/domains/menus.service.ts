@@ -29,6 +29,7 @@ export class MenusService {
   }
 
   update(id: string, updateMenuDto: UpdateMenuDto) {
+    console.log('updateMenuDto', updateMenuDto);
     return this.prisma.menu.update({
       where: {
         id,
