@@ -4,7 +4,7 @@ import { Config } from './config.interface';
 
 export const GLOBAL_CONFIG: Config = {
   nest: {
-    port: 3000,
+    port: +(process.env.PORT || 1321),
   },
   cors: {
     enabled: true,
