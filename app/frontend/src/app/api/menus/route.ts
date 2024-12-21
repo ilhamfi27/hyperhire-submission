@@ -13,9 +13,7 @@ export async function GET(request: NextRequest) {
     return apiErrorResponse(err);
   }
 
-  console.log(res.data);
-
-  return NextResponse.json(res.data);
+  return NextResponse.json({ data: res.data });
 }
 
 export async function POST(request: NextRequest) {
