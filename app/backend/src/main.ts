@@ -24,6 +24,10 @@ async function bootstrap() {
 
   SwaggerModule.setup('api-docs', app, document);
 
-  await app.listen(configService.get('nest.port'));
+  await app.listen(configService.get('nest.port'), () => {
+    console.log(
+      `Server is running on http://0.0.0.0:${configService.get('nest.port')}`,
+    );
+  });
 }
 bootstrap();
